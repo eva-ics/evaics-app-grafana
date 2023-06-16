@@ -62,7 +62,7 @@ export function PageMain() {
           <p>
             <LinkButton
               data-testid={appIds.pageMain.navigateToHelp}
-              href="https://info.bma.ai/en/actual/eva4/hmi/grafana/index.html"
+              href="https://info.bma.ai/en/actual/evaics-app-grafana/index.html"
             >
               Help at Bohemia Automation Informational System
             </LinkButton>
