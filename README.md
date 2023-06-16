@@ -97,7 +97,7 @@ bus::eva.hmi.default::session.list
 
 ### More info
 
-See <https://info.bma.ai/en/actual/eva4/hmi/grafana/index.html>
+See <https://info.bma.ai/en/actual/evaics-app-grafana/index.html>
 
 ### Copyright
 
