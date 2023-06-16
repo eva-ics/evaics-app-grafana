@@ -4,7 +4,7 @@
   "name": "EVA ICS",
   "id": "bohemiaautomation-evaics-app",
   "info": {
-    "keywords": ["app"],
+    "keywords": ["app", "hmi", "iot", "scada", "industrial"],
     "description": "EVA ICS v4 Application",
     "author": {
       "name": "Bohemia Automation"
