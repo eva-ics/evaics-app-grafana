@@ -5,6 +5,7 @@ all:
 	@echo "Select target"
 
 build:
+	npm install
 	npm run build
 
 pack:
@@ -13,6 +14,13 @@ pack:
 	rm -f $(APP)-$(VERSION).zip
 	zip $(APP)-$(VERSION).zip $(APP) -r
 	rm -rf $(APP)
+
+pub:
+	rci x eva.app.grafana
+
+upload:
+	gsutil cp -a public-read $(APP)-$(VERSION).zip gs://pub.bma.ai/evaics-app-grafana/
+	rci job run pub.bma.ai
 
 clean:
 	rm -rf $(APP)
