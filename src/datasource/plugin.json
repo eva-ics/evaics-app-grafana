@@ -1,0 +1,55 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "datasource",
+  "name": "EVA ICS",
+  "id": "bohemiaautomation-evaics-datasource",
+  "routes": [
+    {
+      "path": "jrpc",
+      "url": "{{ .JsonData.url }}",
+      "headers": [
+        {
+          "name": "x-auth-key",
+          "content": "{{ .SecureJsonData.apiKey }}"
+        }
+      ]
+    }
+  ],
+  "metrics": true,
+  "info": {
+    "description": "EVA ICS v4 connector",
+    "author": {
+      "name": "Bohemia Automation"
+    },
+    "keywords": ["datasource", "scada", "iot", "industrial"],
+    "logos": {
+      "small": "img/logo.svg",
+      "large": "img/logo_small.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://www.eva-ics.com"
+      },
+      {
+        "name": "Docs",
+        "url": "https://info.bma.ai/en/actual/eva4/hmi/grafana/index.html"
+      },
+      {
+        "name": "License",
+        "url": "https://info.bma.ai/en/actual/eva4/license.html"
+      },
+      {
+        "name": "Source",
+        "url": "https://github.com/eva-ics/evaics-app-grafana"
+      }
+    ],
+    "screenshots": [],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "dependencies": {
+    "grafanaDependency": ">=9.5.2",
+    "plugins": []
+  }
+}

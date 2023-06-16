@@ -1,0 +1,93 @@
+{
+  "$schema": "https://raw.githubusercontent.com/grafana/grafana/master/docs/sources/developers/plugins/plugin.schema.json",
+  "type": "app",
+  "name": "EVA ICS",
+  "id": "bohemiaautomation-evaics-app",
+  "info": {
+    "keywords": ["app"],
+    "description": "EVA ICS v4 Application",
+    "author": {
+      "name": "Bohemia Automation"
+    },
+    "logos": {
+      "small": "img/logo_small.svg",
+      "large": "img/logo.svg"
+    },
+    "links": [
+      {
+        "name": "Website",
+        "url": "https://www.eva-ics.com"
+      },
+      {
+        "name": "Docs",
+        "url": "https://info.bma.ai/en/actual/eva4/hmi/grafana/index.html"
+      },
+      {
+        "name": "License",
+        "url": "https://info.bma.ai/en/actual/eva4/license.html"
+      },
+      {
+        "name": "Source",
+        "url": "https://github.com/eva-ics/evaics-app-grafana"
+      }
+    ],
+    "screenshots": [
+      {
+        "name": "EVA ICS Overview",
+        "path": "ss/overview.png"
+      },
+      {
+        "name": "Custom dashboard",
+        "path": "ss/custom1.png"
+      }
+    ],
+    "version": "%VERSION%",
+    "updated": "%TODAY%"
+  },
+  "includes": [
+    {
+      "type": "datasource",
+      "name": "EVA ICS"
+    },
+    {
+      "name": "Bohemia Automation EVA ICS Actions Panel",
+      "type": "panel"
+    },
+    {
+      "type": "page",
+      "name": "Main",
+      "path": "/a/%PLUGIN_ID%/main",
+      "role": "Admin",
+      "addToNav": true,
+      "defaultNav": true,
+      "icon": "home-alt"
+    },
+    {
+      "type": "page",
+      "name": "EVA ICS Connections",
+      "path": "/a/%PLUGIN_ID%/ds",
+      "role": "Editor",
+      "addToNav": true,
+      "defaultNav": false
+    },
+    {
+      "type": "dashboard",
+      "name": "EVA ICS Overview",
+      "path": "dashboards/overview.json",
+      "role": "Admin",
+      "addToNav": false
+    },
+    {
+      "type": "page",
+      "icon": "monitor",
+      "name": "EVA ICS Overview",
+      "path": "/d/d2362a28-87bd-4081-b94c-c663fea8227b",
+      "role": "Admin",
+      "addToNav": true
+    }
+  ],
+  "dependencies": {
+    "grafanaDependency": ">=9.5.2",
+    "plugins": []
+  }
+}
