@@ -18,3 +18,6 @@ clean:
 	rm -rf $(APP)
 	rm -rf dist
 	rm -f *.zip
+
+doc:
+	cp ./src/README.md .
