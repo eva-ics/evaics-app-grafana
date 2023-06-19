@@ -41,3 +41,12 @@ export interface EvaIcsQuery extends DataQuery {
   section?: string;
   cli?: boolean;
 }
+
+export enum Names {
+  METHODINPUT = "methodInput",
+  ADDITIONAL = "additional",
+  NAME = "name",
+  VALUE = "value",
+  SECONDNAME = "secondName",
+  SECONDVALUE = "secondValue",
+}

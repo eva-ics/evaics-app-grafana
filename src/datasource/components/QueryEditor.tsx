@@ -5,7 +5,7 @@ import {
   QueryEditorProps,
   SelectableValue,
 } from "@grafana/data";
-import { EvaDataSourceOptions, EvaQuery } from "../types";
+import { EvaDataSourceOptions, EvaQuery, Names } from "../types";
 import {
   Icon,
   InlineField,
@@ -17,17 +17,6 @@ import {
 import { css } from "@emotion/css";
 
 type Props = QueryEditorProps<DataSource, EvaQuery, EvaDataSourceOptions>;
-
-//FIXME: remove to single file
-enum Names {
-  METHODINPUT = "methodInput",
-  ADDITIONAL = "additional",
-  NAME = "name",
-  VALUE = "value",
-  SECONDNAME = "secondName",
-  SECONDVALUE = "secondValue",
-}
-//
 
 export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const s = useStyles2(getStyles);
@@ -42,12 +31,6 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const [showNextLevel, setShowNextLevel] = useState(false);
   const [combinedString, setCombinedString] = useState<string>();
 
-  // const onQueryTextChange = () => {
-  //   onChange({ ...query, queryText: combineString });
-  //   console.log("Query works");
-  // };
-  // const { queryText } = query;
-
   const options = [
     { value: "", label: "Custom method" },
     { value: "Method", label: "Method" },
@@ -55,13 +38,18 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
     { value: "Method", label: "Method" },
   ];
 
+  //change value of drop-down menu
   const handleMethodChange = (selectedValue: SelectableValue) => {
     setMethod(selectedValue);
     onChange({ ...query, queryText: selectedValue?.value });
   };
+
+  //change values of query inputs
   const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
     const fieldName = e.target?.name;
     const fieldValue = e.target?.value;
+    let finalString;
+
     let updatedFields = {
       methodInput,
       additional,
@@ -106,15 +94,22 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
         return;
     }
 
-    const finalString = `${method?.value || ""}${
-      updatedFields.methodInput || ""
-    } ${updatedFields.additional || ""} ${updatedFields.name || ""}=${
-      updatedFields.value || ""
-    } ${updatedFields.secondName || ""}=${updatedFields.secondValue || ""}`;
+    if (!showNextLevel) {
+      finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
+        updatedFields.additional || ""
+      } ${updatedFields.name || ""}=${updatedFields.value || ""}`;
+    } else {
+      finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
+        updatedFields.additional || ""
+      } ${updatedFields.name || ""}=${updatedFields.value || ""} ${
+        updatedFields.secondName || ""
+      }=${updatedFields.secondValue || ""}`;
+    }
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
   };
 
+  //show or hide editor mode
   const onHandleEditMode = () => {
     setShowEditor(!showEditor);
   };
