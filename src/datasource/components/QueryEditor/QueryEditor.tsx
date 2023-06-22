@@ -4,13 +4,9 @@ import React, {
   useEffect,
   useState,
 } from "react";
-import { DataSource } from "../datasource";
-import {
-  GrafanaTheme2,
-  QueryEditorProps,
-  SelectableValue,
-} from "@grafana/data";
-import { EvaDataSourceOptions, EvaQuery, Names } from "../types";
+
+import { GrafanaTheme2, SelectableValue } from "@grafana/data";
+import { InputsParametersData, Names, QueryProps } from "../../types";
 import {
   Icon,
   InlineField,
@@ -20,33 +16,19 @@ import {
   useStyles2,
 } from "@grafana/ui";
 import { css } from "@emotion/css";
+import { options } from "../../helpers";
 
-type Props = QueryEditorProps<DataSource, EvaQuery, EvaDataSourceOptions>;
-
-interface InputData {
-  name: string;
-  value: string;
-  separator: string;
-}
-
-export function QueryEditor({ query, onChange, onRunQuery }: Props) {
+export function QueryEditor({ query, onChange, onRunQuery }: QueryProps) {
   const s = useStyles2(getStyles);
   const [method, setMethod] = useState<SelectableValue<string> | null>(null);
   const [methodInput, setMethodInput] = useState("");
   const [additional, setAdditional] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [combinedString, setCombinedString] = useState<string>();
-  const [inputs, setInputs] = useState<InputData[]>([]);
+  const [inputs, setInputs] = useState<InputsParametersData[]>([]);
 
   console.log("combinedString", combinedString);
   console.log("inputs", inputs);
-
-  const options = [
-    { value: "Method", label: "Method" },
-    { value: "Method", label: "Method" },
-    { value: "Method", label: "Method" },
-    { value: "", label: "Custom method" },
-  ];
 
   //change value of drop-down menu
   const handleMethodChange = (selectedValue: SelectableValue) => {
@@ -136,6 +118,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
     setShowEditor(!showEditor);
   };
 
+  //add parameter's inputs
   const addInput = () => {
     setInputs([...inputs, { name: "", separator: "=", value: "" }]);
   };

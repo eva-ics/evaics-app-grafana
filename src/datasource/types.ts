@@ -1,8 +1,9 @@
 import {
   DataQuery,
   DataSourceJsonData,
-  DataSourceInstanceSettings,
+  DataSourceInstanceSettings, QueryEditorProps,
 } from "@grafana/data";
+import {DataSource} from "./datasource";
 
 export interface EvaQuery extends DataQuery {
   queryText: string;
@@ -42,7 +43,16 @@ export interface EvaIcsQuery extends DataQuery {
   cli?: boolean;
 }
 
+
+
+//Datasource's types
 export enum Names {
   METHODINPUT = "methodInput",
   ADDITIONAL = "additional",
 }
+export interface InputsParametersData {
+  name: string;
+  value: string;
+  separator: string;
+}
+export type QueryProps = QueryEditorProps<DataSource, EvaQuery, EvaDataSourceOptions>;
