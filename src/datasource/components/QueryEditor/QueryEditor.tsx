@@ -28,8 +28,8 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   const [combinedString, setCombinedString] = useState<string>();
   const [inputs, setInputs] = useState<InputsParametersData[]>([]);
 
-  console.log("combinedString", combinedString);
-  console.log("inputs", inputs);
+  // console.log("combinedString", combinedString);
+  // console.log("inputs", inputs);
 
   //change value of drop-down menu
   const handleMethodChange = (selectedValue: SelectableValue) => {
@@ -82,7 +82,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     updatedInputs[index] = { ...updatedInputs[index], [name]: value.trim() };
     setInputs(updatedInputs);
 
-    // Recalculate addInputsString after updating the inputs
+    // Recalculate final string and update state after updating the inputs
     const inputsName = updatedInputs.map((input) => input.name);
     const inputsValue = updatedInputs.map((input) => input.value);
     const addInputsString = inputsName
@@ -96,11 +96,13 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     onChange({ ...query, queryText: finalString });
   };
 
+  //remove inputs line from editor
   const handleRemoveInputs = (index: number) => {
     const updatedInputs = [...inputs];
     updatedInputs.splice(index, 1);
     setInputs(updatedInputs);
 
+    // Recalculate final string and update state after updating the inputs
     const inputsName = updatedInputs.map((input) => input.name);
     const inputsValue = updatedInputs.map((input) => input.value);
     const addInputsString = inputsName
