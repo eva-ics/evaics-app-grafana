@@ -1,7 +1,6 @@
 import React, {
-  ChangeEvent,
-  FormEventHandler,
-  useEffect,
+  ChangeEvent, FormEvent,
+ useCallback,
   useState,
 } from "react";
 
@@ -32,49 +31,54 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   // console.log("inputs", inputs);
 
   //change value of drop-down menu
-  const handleMethodChange = (selectedValue: SelectableValue) => {
-    setMethod(selectedValue);
-    onChange({ ...query, queryText: selectedValue?.value });
-  };
+  const handleMethodChange = useCallback(
+      (selectedValue: SelectableValue) => {
+        setMethod(selectedValue);
+        onChange({ ...query, queryText: selectedValue?.value });
+      },
+      [setMethod, onChange, query]
+  );
 
-  //change values of query inputs
-  const handleChange: FormEventHandler<HTMLInputElement> = (e) => {
-    const fieldName = e.currentTarget?.name;
-    const fieldValue = e.currentTarget?.value.trim();
-    let finalString;
+  const handleChange = useCallback(
+      (e: FormEvent<HTMLInputElement>) => {
+        const fieldName = e.currentTarget?.name;
+        const fieldValue = e.currentTarget?.value.trim();
+        let finalString;
 
-    let updatedFields = {
-      methodInput,
-      additional,
-    };
+        let updatedFields = {
+          methodInput,
+          additional,
+        };
 
-    switch (fieldName) {
-      case Names.METHODINPUT:
-        setMethodInput(fieldValue);
-        updatedFields.methodInput = fieldValue;
-        break;
+        switch (fieldName) {
+          case Names.METHODINPUT:
+            setMethodInput(fieldValue);
+            updatedFields.methodInput = fieldValue;
+            break;
 
-      case Names.ADDITIONAL:
-        setAdditional(fieldValue);
-        updatedFields.additional = fieldValue;
-        break;
+          case Names.ADDITIONAL:
+            setAdditional(fieldValue);
+            updatedFields.additional = fieldValue;
+            break;
 
-      default:
-        return;
-    }
+          default:
+            return;
+        }
 
-    finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
-      updatedFields.additional || ""
-    } `;
+        finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
+            updatedFields.additional || ""
+        } `;
 
-    setCombinedString(finalString);
-    onChange({ ...query, queryText: finalString });
-  };
+        setCombinedString(finalString);
+        onChange({ ...query, queryText: finalString });
+      },
+      [setMethodInput, setAdditional, method, methodInput, additional, setCombinedString, onChange, query]
+  );
 
   // console.log("combine", combinedString);
-  const handleAddedInputChange = (
-    e: ChangeEvent<HTMLInputElement>,
-    index: number
+  const handleAddedInputChange = useCallback((
+      e: ChangeEvent<HTMLInputElement>,
+      index: number
   ) => {
     const { name, value } = e.target;
 
@@ -86,18 +90,18 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     const inputsName = updatedInputs.map((input) => input.name);
     const inputsValue = updatedInputs.map((input) => input.value);
     const addInputsString = inputsName
-      .map((name, i) => `${name}=${inputsValue[i]}`)
-      .join(" ");
+        .map((name, i) => `${name}=${inputsValue[i]}`)
+        .join(" ");
 
     const finalString = `${method?.value || ""}${methodInput || ""} ${
-      additional || ""
+        additional || ""
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  };
+  },[ method, methodInput, additional, setCombinedString, onChange, query,inputs])
 
   //remove inputs line from editor
-  const handleRemoveInputs = (index: number) => {
+  const handleRemoveInputs = useCallback((index: number) => {
     const updatedInputs = [...inputs];
     updatedInputs.splice(index, 1);
     setInputs(updatedInputs);
@@ -106,15 +110,15 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     const inputsName = updatedInputs.map((input) => input.name);
     const inputsValue = updatedInputs.map((input) => input.value);
     const addInputsString = inputsName
-      .map((name, i) => `${name}=${inputsValue[i]}`)
-      .join(" ");
+        .map((name, i) => `${name}=${inputsValue[i]}`)
+        .join(" ");
 
     const finalString = `${method?.value || ""}${methodInput || ""} ${
-      additional || ""
+        additional || ""
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  };
+  },[additional,inputs,method?.value,methodInput,onChange,query])
 
   //show or hide editor mode
   const onHandleEditMode = () => {
@@ -125,15 +129,6 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   const addInput = () => {
     setInputs([...inputs, { name: "", separator: "=", value: "" }]);
   };
-
-  useEffect(() => {}, [
-    method,
-    methodInput,
-    additional,
-    inputs,
-    onChange,
-    query,
-  ]);
 
   return (
     <div className={s.query_wrapper}>
