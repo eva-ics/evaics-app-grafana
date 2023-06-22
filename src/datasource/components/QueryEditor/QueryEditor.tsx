@@ -7,6 +7,8 @@ import React, {
 
 import { GrafanaTheme2, SelectableValue } from "@grafana/data";
 import { InputsParametersData, Names, QueryProps } from "../../types";
+import { options } from "../../helpers";
+
 import {
   Icon,
   InlineField,
@@ -16,9 +18,8 @@ import {
   useStyles2,
 } from "@grafana/ui";
 import { css } from "@emotion/css";
-import { options } from "../../helpers";
 
-export function QueryEditor({ query, onChange, onRunQuery }: QueryProps) {
+export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   const s = useStyles2(getStyles);
   const [method, setMethod] = useState<SelectableValue<string> | null>(null);
   const [methodInput, setMethodInput] = useState("");
@@ -39,7 +40,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: QueryProps) {
   //change values of query inputs
   const handleChange: FormEventHandler<HTMLInputElement> = (e) => {
     const fieldName = e.currentTarget?.name;
-    const fieldValue = e.currentTarget?.value;
+    const fieldValue = e.currentTarget?.value.trim();
     let finalString;
 
     let updatedFields = {
@@ -78,7 +79,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: QueryProps) {
     const { name, value } = e.target;
 
     const updatedInputs = [...inputs];
-    updatedInputs[index] = { ...updatedInputs[index], [name]: value };
+    updatedInputs[index] = { ...updatedInputs[index], [name]: value.trim() };
     setInputs(updatedInputs);
 
     // Recalculate addInputsString after updating the inputs
@@ -246,7 +247,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: QueryProps) {
       )}
     </div>
   );
-}
+};
 
 const getStyles = (theme: GrafanaTheme2) => ({
   query_wrapper: css`
