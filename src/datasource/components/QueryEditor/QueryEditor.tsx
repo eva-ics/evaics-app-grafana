@@ -25,10 +25,10 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   const [additional, setAdditional] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [combinedString, setCombinedString] = useState<string>();
-  const [inputs, setInputs] = useState<InputsParametersData[]>([]);
+  const [parameters, setParameters] = useState<InputsParametersData[]>([]);
 
   // console.log("combinedString", combinedString);
-  // console.log("inputs", inputs);
+  // console.log("parameters", parameters);
 
   //change value of drop-down menu
   const handleMethodChange = useCallback(
@@ -82,9 +82,9 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   ) => {
     const { name, value } = e.target;
 
-    const updatedInputs = [...inputs];
+    const updatedInputs = [...parameters];
     updatedInputs[index] = { ...updatedInputs[index], [name]: value.trim() };
-    setInputs(updatedInputs);
+    setParameters(updatedInputs);
 
     // Recalculate final string and update state after updating the inputs
     const inputsName = updatedInputs.map((input) => input.name);
@@ -98,13 +98,13 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  },[ method, methodInput, additional, setCombinedString, onChange, query,inputs])
+  },[ method, methodInput, additional, setCombinedString, onChange, query,parameters])
 
   //remove inputs line from editor
   const handleRemoveInputs = useCallback((index: number) => {
-    const updatedInputs = [...inputs];
+    const updatedInputs = [...parameters];
     updatedInputs.splice(index, 1);
-    setInputs(updatedInputs);
+    setParameters(updatedInputs);
 
     // Recalculate final string and update state after updating the inputs
     const inputsName = updatedInputs.map((input) => input.name);
@@ -118,7 +118,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  },[additional,inputs,method?.value,methodInput,onChange,query])
+  },[additional,parameters,method?.value,methodInput,onChange,query])
 
   //show or hide editor mode
   const onHandleEditMode = () => {
@@ -127,7 +127,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
 
   //add parameter's inputs
   const addInput = () => {
-    setInputs([...inputs, { name: "", separator: "=", value: "" }]);
+    setParameters([...parameters, { name: "", separator: "=", value: "" }]);
   };
 
   return (
@@ -186,7 +186,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
                 width={79.5}
               />
             </InlineField>
-            {inputs.length === 0 && (
+            {parameters.length === 0 && (
               <button
                 type="button"
                 className="gf-form-label query-part"
@@ -198,7 +198,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
           </div>
           <div className={s.input_block}>
             <div>
-              {inputs.map((input, index) => (
+              {parameters.map((input, index) => (
                 <div key={index} className={s.editor_wrapper}>
                   <InlineField label="Parameter" labelWidth={16}>
                     <Input
@@ -218,7 +218,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
                     value={input.value}
                     width={30}
                   />
-                  {index !== inputs.length && (
+                  {index !== parameters.length && (
                     <button
                       type="button"
                       className="gf-form-label query-part"
@@ -227,7 +227,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
                       <Icon name="minus" />
                     </button>
                   )}
-                  {index === inputs.length - 1 && (
+                  {index === parameters.length - 1 && (
                     <button
                       type="button"
                       className="gf-form-label query-part"
