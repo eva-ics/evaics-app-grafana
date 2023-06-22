@@ -1,4 +1,9 @@
-import React, { ChangeEvent, useState } from "react";
+import React, {
+  ChangeEvent,
+  FormEventHandler,
+  useEffect,
+  useState,
+} from "react";
 import { DataSource } from "../datasource";
 import {
   GrafanaTheme2,
@@ -18,24 +23,29 @@ import { css } from "@emotion/css";
 
 type Props = QueryEditorProps<DataSource, EvaQuery, EvaDataSourceOptions>;
 
+interface InputData {
+  name: string;
+  value: string;
+  separator: string;
+}
+
 export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const s = useStyles2(getStyles);
   const [method, setMethod] = useState<SelectableValue<string> | null>(null);
   const [methodInput, setMethodInput] = useState("");
-  const [name, setName] = useState("");
-  const [value, setValue] = useState("");
-  const [secondName, setSecondName] = useState("");
-  const [secondValue, setSecondValue] = useState("");
   const [additional, setAdditional] = useState("");
   const [showEditor, setShowEditor] = useState(false);
-  const [showNextLevel, setShowNextLevel] = useState(false);
   const [combinedString, setCombinedString] = useState<string>();
+  const [inputs, setInputs] = useState<InputData[]>([]);
+
+  console.log("combinedString", combinedString);
+  console.log("inputs", inputs);
 
   const options = [
+    { value: "Method", label: "Method" },
+    { value: "Method", label: "Method" },
+    { value: "Method", label: "Method" },
     { value: "", label: "Custom method" },
-    { value: "Method", label: "Method" },
-    { value: "Method", label: "Method" },
-    { value: "Method", label: "Method" },
   ];
 
   //change value of drop-down menu
@@ -45,18 +55,14 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   };
 
   //change values of query inputs
-  const handleChange = async (e: ChangeEvent<HTMLInputElement>) => {
-    const fieldName = e.target?.name;
-    const fieldValue = e.target?.value;
+  const handleChange: FormEventHandler<HTMLInputElement> = (e) => {
+    const fieldName = e.currentTarget?.name;
+    const fieldValue = e.currentTarget?.value;
     let finalString;
 
     let updatedFields = {
       methodInput,
       additional,
-      name,
-      value,
-      secondName,
-      secondValue,
     };
 
     switch (fieldName) {
@@ -70,41 +76,57 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
         updatedFields.additional = fieldValue;
         break;
 
-      case Names.NAME:
-        setName(fieldValue);
-        updatedFields.name = fieldValue;
-        break;
-
-      case Names.VALUE:
-        setValue(fieldValue);
-        updatedFields.value = fieldValue;
-        break;
-
-      case Names.SECONDNAME:
-        setSecondName(fieldValue);
-        updatedFields.secondName = fieldValue;
-        break;
-
-      case Names.SECONDVALUE:
-        setSecondValue(fieldValue);
-        updatedFields.secondValue = fieldValue;
-        break;
-
       default:
         return;
     }
 
-    if (!showNextLevel) {
-      finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
-        updatedFields.additional || ""
-      } ${updatedFields.name || ""}=${updatedFields.value || ""}`;
-    } else {
-      finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
-        updatedFields.additional || ""
-      } ${updatedFields.name || ""}=${updatedFields.value || ""} ${
-        updatedFields.secondName || ""
-      }=${updatedFields.secondValue || ""}`;
-    }
+    finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
+      updatedFields.additional || ""
+    } `;
+
+    setCombinedString(finalString);
+    onChange({ ...query, queryText: finalString });
+  };
+
+  // console.log("combine", combinedString);
+  const handleAddedInputChange = (
+    e: ChangeEvent<HTMLInputElement>,
+    index: number
+  ) => {
+    const { name, value } = e.target;
+
+    const updatedInputs = [...inputs];
+    updatedInputs[index] = { ...updatedInputs[index], [name]: value };
+    setInputs(updatedInputs);
+
+    // Recalculate addInputsString after updating the inputs
+    const inputsName = updatedInputs.map((input) => input.name);
+    const inputsValue = updatedInputs.map((input) => input.value);
+    const addInputsString = inputsName
+      .map((name, i) => `${name}=${inputsValue[i]}`)
+      .join(" ");
+
+    const finalString = `${method?.value || ""}${methodInput || ""} ${
+      additional || ""
+    } ${addInputsString || ""}`;
+    setCombinedString(finalString);
+    onChange({ ...query, queryText: finalString });
+  };
+
+  const handleRemoveInputs = (index: number) => {
+    const updatedInputs = [...inputs];
+    updatedInputs.splice(index, 1);
+    setInputs(updatedInputs);
+
+    const inputsName = updatedInputs.map((input) => input.name);
+    const inputsValue = updatedInputs.map((input) => input.value);
+    const addInputsString = inputsName
+      .map((name, i) => `${name}=${inputsValue[i]}`)
+      .join(" ");
+
+    const finalString = `${method?.value || ""}${methodInput || ""} ${
+      additional || ""
+    } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
   };
@@ -113,6 +135,19 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
   const onHandleEditMode = () => {
     setShowEditor(!showEditor);
   };
+
+  const addInput = () => {
+    setInputs([...inputs, { name: "", separator: "=", value: "" }]);
+  };
+
+  useEffect(() => {}, [
+    method,
+    methodInput,
+    additional,
+    inputs,
+    onChange,
+    query,
+  ]);
 
   return (
     <div className={s.query_wrapper}>
@@ -152,9 +187,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
             ) : (
               ""
             )}
-            <button type="button" className="gf-form-label query-part">
-              <Icon name="plus" />
-            </button>
+
             <button
               type="button"
               className="gf-form-label query-part"
@@ -164,7 +197,7 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
             </button>
           </div>
           <div className={s.input_block}>
-            <InlineField label="" labelWidth={16}>
+            <InlineField label="OID(s)" labelWidth={16}>
               <Input
                 name={Names.ADDITIONAL}
                 onChange={handleChange}
@@ -172,58 +205,60 @@ export function QueryEditor({ query, onChange, onRunQuery }: Props) {
                 width={79.5}
               />
             </InlineField>
+            {inputs.length === 0 && (
+              <button
+                type="button"
+                className="gf-form-label query-part"
+                onClick={addInput}
+              >
+                <Icon name="plus" />
+              </button>
+            )}
           </div>
           <div className={s.input_block}>
-            <InlineField label="Name" labelWidth={16}>
-              <Input
-                name={Names.NAME}
-                onChange={handleChange}
-                value={name}
-                width={30}
-              />
-            </InlineField>
-            <div className={s.separator}>
-              <span> = </span>
+            <div>
+              {inputs.map((input, index) => (
+                <div key={index} className={s.editor_wrapper}>
+                  <InlineField label="Parameter" labelWidth={16}>
+                    <Input
+                      name="name"
+                      onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                        handleAddedInputChange(e, index)
+                      }
+                      value={input.name}
+                      width={30}
+                    />
+                  </InlineField>
+                  <Input
+                    name="value"
+                    onChange={(e: ChangeEvent<HTMLInputElement>) =>
+                      handleAddedInputChange(e, index)
+                    }
+                    value={input.value}
+                    width={30}
+                  />
+                  {index !== inputs.length && (
+                    <button
+                      type="button"
+                      className="gf-form-label query-part"
+                      onClick={() => handleRemoveInputs(index)}
+                    >
+                      <Icon name="minus" />
+                    </button>
+                  )}
+                  {index === inputs.length - 1 && (
+                    <button
+                      type="button"
+                      className="gf-form-label query-part"
+                      onClick={addInput}
+                    >
+                      <Icon name="plus" />
+                    </button>
+                  )}
+                </div>
+              ))}
             </div>
-            <InlineField label="Value" labelWidth={16}>
-              <Input
-                name={Names.VALUE}
-                onChange={handleChange}
-                value={value}
-                width={30}
-              />
-            </InlineField>
-            <button
-              type="button"
-              className="gf-form-label query-part"
-              onClick={() => setShowNextLevel(true)}
-            >
-              <Icon name="plus" />
-            </button>
           </div>
-          {showNextLevel && (
-            <div className={s.input_block}>
-              <InlineField label="Name" labelWidth={16}>
-                <Input
-                  name={Names.SECONDNAME}
-                  onChange={handleChange}
-                  value={secondName}
-                  width={30}
-                />
-              </InlineField>
-              <div className={s.separator}>
-                <span> = </span>
-              </div>
-              <InlineField label="Value" labelWidth={16}>
-                <Input
-                  name={Names.SECONDVALUE}
-                  onChange={handleChange}
-                  value={secondValue}
-                  width={30}
-                />
-              </InlineField>
-            </div>
-          )}
         </>
       )}
     </div>

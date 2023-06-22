@@ -45,8 +45,4 @@ export interface EvaIcsQuery extends DataQuery {
 export enum Names {
   METHODINPUT = "methodInput",
   ADDITIONAL = "additional",
-  NAME = "name",
-  VALUE = "value",
-  SECONDNAME = "secondName",
-  SECONDVALUE = "secondValue",
 }
