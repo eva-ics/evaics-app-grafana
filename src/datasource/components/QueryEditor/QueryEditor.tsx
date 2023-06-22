@@ -1,8 +1,4 @@
-import React, {
-  ChangeEvent, FormEvent,
- useCallback,
-  useState,
-} from "react";
+import React, { ChangeEvent, FormEvent, useCallback, useState } from "react";
 
 import { GrafanaTheme2, SelectableValue } from "@grafana/data";
 import { InputsParametersData, Names, QueryProps } from "../../types";
@@ -32,93 +28,122 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
 
   //change value of drop-down menu
   const handleMethodChange = useCallback(
-      (selectedValue: SelectableValue) => {
-        setMethod(selectedValue);
-        onChange({ ...query, queryText: selectedValue?.value });
-      },
-      [setMethod, onChange, query]
+    (selectedValue: SelectableValue) => {
+      setMethod(selectedValue);
+      onChange({ ...query, queryText: selectedValue?.value });
+    },
+    [setMethod, onChange, query]
   );
 
   const handleChange = useCallback(
-      (e: FormEvent<HTMLInputElement>) => {
-        const fieldName = e.currentTarget?.name;
-        const fieldValue = e.currentTarget?.value.trim();
-        let finalString;
+    (e: FormEvent<HTMLInputElement>) => {
+      const fieldName = e.currentTarget?.name;
+      const fieldValue = e.currentTarget?.value.trim();
+      let finalString;
 
-        let updatedFields = {
-          methodInput,
-           oidsValue,
-        };
+      let updatedFields = {
+        methodInput,
+        oidsValue,
+      };
 
-        switch (fieldName) {
-          case Names.METHODINPUT:
-            setMethodInput(fieldValue);
-            updatedFields.methodInput = fieldValue;
-            break;
+      switch (fieldName) {
+        case Names.METHODINPUT:
+          setMethodInput(fieldValue);
+          updatedFields.methodInput = fieldValue;
+          break;
 
-          case Names.OIDS:
-            setOidsValue(fieldValue);
-            updatedFields.oidsValue = fieldValue;
-            break;
+        case Names.OIDS:
+          setOidsValue(fieldValue);
+          updatedFields.oidsValue = fieldValue;
+          break;
 
-          default:
-            return;
-        }
+        default:
+          return;
+      }
 
-        finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
-            updatedFields.oidsValue || ""
+      if (method?.value) {
+        setMethodInput("");
+        finalString = `${method?.value || ""} ${
+          updatedFields.oidsValue || ""
         } `;
-
         setCombinedString(finalString);
         onChange({ ...query, queryText: finalString });
-      },
-      [setMethodInput, setOidsValue, method, methodInput, oidsValue, setCombinedString, onChange, query]
+      } else {
+        finalString = `${method?.value || ""}${
+          updatedFields.methodInput || ""
+        } ${updatedFields.oidsValue || ""} `;
+        setCombinedString(finalString);
+        onChange({ ...query, queryText: finalString });
+      }
+      // onChange({ ...query, queryText: finalString });
+    },
+    [
+      setMethodInput,
+      setOidsValue,
+      method,
+      methodInput,
+      oidsValue,
+      setCombinedString,
+      onChange,
+      query,
+    ]
   );
 
   // console.log("combine", combinedString);
-  const handleAddedInputChange = useCallback((
-      e: ChangeEvent<HTMLInputElement>,
-      index: number
-  ) => {
-    const { name, value } = e.target;
+  const handleAddedInputChange = useCallback(
+    (e: ChangeEvent<HTMLInputElement>, index: number) => {
+      const { name, value } = e.target;
 
-    const updatedInputs = [...parameters];
-    updatedInputs[index] = { ...updatedInputs[index], [name]: value.trim() };
-    setParameters(updatedInputs);
+      const updatedInputs = [...parameters];
+      updatedInputs[index] = { ...updatedInputs[index], [name]: value.trim() };
+      setParameters(updatedInputs);
 
-    // Recalculate final string and update state after updating the inputs
-    const inputsName = updatedInputs.map((input) => input.name);
-    const inputsValue = updatedInputs.map((input) => input.value);
-    const addInputsString = inputsName
+      // Recalculate final string and update state after updating the inputs
+      const inputsName = updatedInputs.map((input) => input.name);
+      const inputsValue = updatedInputs.map((input) => input.value);
+      const addInputsString = inputsName
         .map((name, i) => `${name}=${inputsValue[i]}`)
         .join(" ");
 
-    const finalString = `${method?.value || ""}${methodInput || ""} ${
+      const finalString = `${method?.value || ""}${methodInput || ""} ${
         oidsValue || ""
-    } ${addInputsString || ""}`;
-    setCombinedString(finalString);
-    onChange({ ...query, queryText: finalString });
-  },[ method, methodInput, oidsValue, setCombinedString, onChange, query,parameters])
+      } ${addInputsString || ""}`;
+      setCombinedString(finalString);
+      onChange({ ...query, queryText: finalString });
+    },
+    [
+      method,
+      methodInput,
+      oidsValue,
+      setCombinedString,
+      onChange,
+      query,
+      parameters,
+    ]
+  );
 
   //remove inputs line from editor
-  const handleRemoveInputs = useCallback((index: number) => {
-    const updatedInputs = [...parameters];
-    updatedInputs.splice(index, 1);
-    setParameters(updatedInputs);
+  const handleRemoveInputs = useCallback(
+    (index: number) => {
+      const updatedInputs = [...parameters];
+      updatedInputs.splice(index, 1);
+      setParameters(updatedInputs);
 
-    // Recalculate final string and update state after updating the inputs
-    const inputsName = updatedInputs.map((input) => input.name);
-    const inputsValue = updatedInputs.map((input) => input.value);
-    const addInputsString = inputsName
+      // Recalculate final string and update state after updating the inputs
+      const inputsName = updatedInputs.map((input) => input.name);
+      const inputsValue = updatedInputs.map((input) => input.value);
+      const addInputsString = inputsName
         .map((name, i) => `${name}=${inputsValue[i]}`)
         .join(" ");
 
-    const finalString = `${method?.value || ""}${methodInput || ""} ${
+      const finalString = `${method?.value || ""}${methodInput || ""} ${
         oidsValue || ""
-    } ${addInputsString || ""}`;
-    setCombinedString(finalString);
-    onChange({ ...query, queryText: finalString });
-  },[oidsValue,parameters,method?.value,methodInput,onChange,query])
+      } ${addInputsString || ""}`;
+      setCombinedString(finalString);
+      onChange({ ...query, queryText: finalString });
+    },
+    [oidsValue, parameters, method?.value, methodInput, onChange, query]
+  );
 
   //show or hide editor mode
   const onHandleEditMode = () => {
