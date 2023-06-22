@@ -48,7 +48,7 @@ export interface EvaIcsQuery extends DataQuery {
 //Datasource's types
 export enum Names {
   METHODINPUT = "methodInput",
-  ADDITIONAL = "additional",
+  OIDS = "oidsValue",
 }
 export interface InputsParametersData {
   name: string;

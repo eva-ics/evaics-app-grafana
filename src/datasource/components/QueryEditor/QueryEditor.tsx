@@ -22,7 +22,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
   const s = useStyles2(getStyles);
   const [method, setMethod] = useState<SelectableValue<string> | null>(null);
   const [methodInput, setMethodInput] = useState("");
-  const [additional, setAdditional] = useState("");
+  const [oidsValue, setOidsValue] = useState("");
   const [showEditor, setShowEditor] = useState(false);
   const [combinedString, setCombinedString] = useState<string>();
   const [parameters, setParameters] = useState<InputsParametersData[]>([]);
@@ -47,7 +47,7 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
 
         let updatedFields = {
           methodInput,
-          additional,
+           oidsValue,
         };
 
         switch (fieldName) {
@@ -56,9 +56,9 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
             updatedFields.methodInput = fieldValue;
             break;
 
-          case Names.ADDITIONAL:
-            setAdditional(fieldValue);
-            updatedFields.additional = fieldValue;
+          case Names.OIDS:
+            setOidsValue(fieldValue);
+            updatedFields.oidsValue = fieldValue;
             break;
 
           default:
@@ -66,13 +66,13 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
         }
 
         finalString = `${method?.value || ""}${updatedFields.methodInput || ""} ${
-            updatedFields.additional || ""
+            updatedFields.oidsValue || ""
         } `;
 
         setCombinedString(finalString);
         onChange({ ...query, queryText: finalString });
       },
-      [setMethodInput, setAdditional, method, methodInput, additional, setCombinedString, onChange, query]
+      [setMethodInput, setOidsValue, method, methodInput, oidsValue, setCombinedString, onChange, query]
   );
 
   // console.log("combine", combinedString);
@@ -94,11 +94,11 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
         .join(" ");
 
     const finalString = `${method?.value || ""}${methodInput || ""} ${
-        additional || ""
+        oidsValue || ""
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  },[ method, methodInput, additional, setCombinedString, onChange, query,parameters])
+  },[ method, methodInput, oidsValue, setCombinedString, onChange, query,parameters])
 
   //remove inputs line from editor
   const handleRemoveInputs = useCallback((index: number) => {
@@ -114,11 +114,11 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
         .join(" ");
 
     const finalString = `${method?.value || ""}${methodInput || ""} ${
-        additional || ""
+        oidsValue || ""
     } ${addInputsString || ""}`;
     setCombinedString(finalString);
     onChange({ ...query, queryText: finalString });
-  },[additional,parameters,method?.value,methodInput,onChange,query])
+  },[oidsValue,parameters,method?.value,methodInput,onChange,query])
 
   //show or hide editor mode
   const onHandleEditMode = () => {
@@ -180,9 +180,9 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
           <div className={s.input_block}>
             <InlineField label="OID(s)" labelWidth={16}>
               <Input
-                name={Names.ADDITIONAL}
+                name={Names.OIDS}
                 onChange={handleChange}
-                value={additional}
+                value={oidsValue}
                 width={79.5}
               />
             </InlineField>
