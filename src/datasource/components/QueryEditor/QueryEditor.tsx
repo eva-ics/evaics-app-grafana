@@ -61,20 +61,22 @@ export const QueryEditor = ({ query, onChange, onRunQuery }: QueryProps) => {
           return;
       }
 
-      if (method?.value) {
-        setMethodInput("");
-        finalString = `${method?.value || ""} ${
-          updatedFields.oidsValue || ""
-        } `;
-        setCombinedString(finalString);
-        onChange({ ...query, queryText: finalString });
-      } else {
-        finalString = `${method?.value || ""}${
-          updatedFields.methodInput || ""
-        } ${updatedFields.oidsValue || ""} `;
-        setCombinedString(finalString);
-        onChange({ ...query, queryText: finalString });
-      }
+        if (method?.value) {
+            setMethodInput("");
+            setParameters([])
+            finalString = `${method?.value || ""} ${
+                updatedFields.oidsValue || ""
+            } `;
+            setCombinedString(finalString);
+            onChange({ ...query, queryText: finalString });
+        } else {
+            setParameters([])
+            finalString = `${method?.value || ""}${
+                updatedFields.methodInput || ""
+            } ${updatedFields.oidsValue || ""} `;
+            setCombinedString(finalString);
+            onChange({ ...query, queryText: finalString });
+        }
       // onChange({ ...query, queryText: finalString });
     },
     [
